@@ -3,8 +3,14 @@ import { ref } from 'vue';
 import SleepAlert from './components/SleepAlert.vue';
 import Chatbot from './components/Chatbot.vue';
 
-const theme = ref('light');
+const theme = ref('dark');
 const activeTab = ref('calculator'); // 'calculator' or 'chatbot'
+
+const emojis = ['😴', '🌙', '🛌', '💤', '✨'];
+const bigEmoji = ref(null);
+const toggleBigEmoji = (idx) => {
+  bigEmoji.value = bigEmoji.value === idx ? null : idx;
+};
 
 const toggleTheme = () => {
   theme.value = theme.value === 'light' ? 'dark' : 'light';
@@ -19,9 +25,17 @@ const changeTab = (tab) => {
   <div :class="theme">
     <header class="app-header">
       <img src="/logo.png" class="logo" alt="WiseSleep logo" />
-      <h1>SleepWise</h1>
+      <div class="header-title-emojis">
+        <h1>SleepWise</h1>
+        <div class="emoji-header-bar">
+          <span v-for="(emoji, idx) in emojis" :key="'header-' + idx" class="emoji-header" :class="{ 'emoji-big': bigEmoji === 'header-' + idx }" @click="toggleBigEmoji('header-' + idx)">{{ emoji }}</span>
+        </div>
+      </div>
       <div class="header-controls">
-        <i :class="['fas', theme === 'light' ? 'fa-moon' : 'fa-sun']" @click="toggleTheme" class="theme-icon" :style="{ color: theme === 'light' ? '#333' : '#fff' }"></i>
+        <span class="theme-emoji" @click="toggleTheme" :title="theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'" style="cursor:pointer;font-size:1.5em;">
+          <span v-if="theme === 'dark'" aria-label="Sol" role="img">🌞</span>
+          <span v-else aria-label="Luna" role="img">🌙</span>
+        </span>
       </div>
     </header>
 
@@ -29,6 +43,9 @@ const changeTab = (tab) => {
       <button :class="{ active: activeTab === 'calculator' }" @click="changeTab('calculator')">Calculadora</button>
       <button :class="{ active: activeTab === 'chatbot' }" @click="changeTab('chatbot')">Chatbot</button>
     </nav>
+    <div class="emoji-bar">
+      <span v-for="(emoji, idx) in emojis" :key="idx" class="emoji-center" :class="{ 'emoji-big': bigEmoji === idx }" @click="toggleBigEmoji(idx)">{{ emoji }}</span>
+    </div>
 
     <main class="tab-content">
       <SleepAlert v-if="activeTab === 'calculator'" />
@@ -65,19 +82,20 @@ const changeTab = (tab) => {
 }
 
 .theme-icon {
+  display: none;
+}
+.theme-emoji {
   cursor: pointer;
   font-size: 1.5em;
-  transition: transform 0.3s ease;
   padding: 8px;
   border-radius: 50%;
   background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+  transition: transform 0.3s ease;
 }
-
-.theme-icon:hover {
+.theme-emoji:hover {
   transform: scale(1.1);
 }
-
-.dark .theme-icon {
+.dark .theme-emoji {
   background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
 }
 
@@ -190,4 +208,52 @@ const changeTab = (tab) => {
   color: #eeeeee;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
-  </style>
+  .emoji-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2em;
+  margin: 1em 0 0.5em 0;
+}
+.emoji-center {
+  font-size: 2em;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(.68,-0.55,.27,1.55);
+  user-select: none;
+}
+.emoji-center:active,
+.emoji-center.emoji-big {
+  transform: scale(2.2);
+  z-index: 2;
+}
+.light .emoji-bar {
+  background: #f5f5f5;
+}
+.dark .emoji-bar {
+  background: #222;
+}
+.header-title-emojis {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+}
+.emoji-header-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  margin-left: 0.5em;
+}
+.emoji-header {
+  font-size: 1.3em;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(.68,-0.55,.27,1.55);
+  user-select: none;
+  display: inline-block;
+  animation: bounce 1.2s infinite alternate;
+}
+.emoji-header:active,
+.emoji-header.emoji-big {
+  transform: scale(2.2);
+  z-index: 2;
+}
+</style>

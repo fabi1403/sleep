@@ -82,13 +82,25 @@ export default {
       
       for (const [key, value] of Object.entries(commonQuestions)) {
         if (questionLowerCase.includes(key)) {
-          botResponse = value;
+          // Añadir emojis animados según la pregunta
+          if (key.includes('mejor hora')) {
+            botResponse = '🕙 ' + value + ' <span class="emoji-animated">🕙</span>';
+          } else if (key.includes('mejorar calidad')) {
+            botResponse = '😴 ' + value + ' <span class="emoji-animated">😴</span>';
+          } else if (key.includes('horas debo dormir')) {
+            botResponse = '⏰ ' + value + ' <span class="emoji-animated">⏰</span>';
+          } else if (key.includes('no puedo dormir')) {
+            botResponse = '🌙 ' + value + ' <span class="emoji-animated">🌙</span>';
+          } else {
+            botResponse = '💬 ' + value + ' <span class="emoji-animated">💬</span>';
+          }
           break;
         }
       }
 
       if (botResponse) {
-        messages.value.push({ text: botResponse, sender: 'bot' });
+-        messages.value.push({ text: botResponse, sender: 'bot' });
++        messages.value.push({ text: botResponse, sender: 'bot', isHtml: true });
         conversationContext.value.push({ role: 'assistant', content: botResponse });
         isLoading.value = false;
         return;
@@ -351,5 +363,11 @@ i {
 @keyframes bounce {
   0%, 80%, 100% { transform: scale(0); }
   40% { transform: scale(1); }
+}
+.emoji-animated {
+  display: inline-block;
+  animation: bounce 1.2s infinite alternate;
+  font-size: 1.3em;
+  vertical-align: middle;
 }
 </style>

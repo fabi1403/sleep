@@ -1,7 +1,10 @@
 <template>
-  <div class="sleep-alert">
+  <div class="sleep-alert" :class="{ 'dark': isDarkMode }">
+    <button @click="toggleDarkMode" class="theme-toggle">
+      <i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'"></i>
+    </button>
     <div class="title-bar">
-      <h2><i class="fas fa-calculator"></i> Alerta de Tiempo de Sueño</h2>
+      <h2>✨ Calculadora de Sueño Saludable 💫</h2>
     </div>
     <div class="input-section">
       <label for="age">
@@ -18,7 +21,12 @@
       <div class="age-group-info animate-slide-up">
         <div class="age-icon-wrapper">
           <div class="age-icon animate-glow">
-            <i :class="getAgeIcon()"></i>
+            <template v-if="getAgeIcon().startsWith('fas')">
+              <i :class="getAgeIcon()"></i>
+            </template>
+            <template v-else>
+              <span class="emoji-icon">{{ getAgeIcon() }}</span>
+            </template>
           </div>
         </div>
         <div class="age-text">
@@ -26,12 +34,28 @@
           <p class="animate-fade-in-delay">{{ ageGroupRecommendation }}</p>
           <ul class="suggestions-list" v-if="currentAgeGroup && currentAgeGroup.suggestions">
             <li v-for="(suggestion, index) in currentAgeGroup.suggestions" :key="index" class="animate-slide-in" :style="{ animationDelay: `${index * 0.2}s` }">
-              <i class="fas fa-check"></i> {{ suggestion }}
+              <span :class="'emoji-animated'">✨</span> <i class="fas fa-check"></i> {{ suggestion }}
             </li>
           </ul>
         </div>
       </div>
     </div>
+
+    <div class="description-section">
+      <p>Mejora tu bienestar al ayudarte a comprender mejor cómo el sueño afecta tu salud. Además, hace que aprender sobre el sueño sea algo divertido y accesible, con un toque de conversación y recomendaciones personalizadas.</p>
+    </div>
+
+    <div class="chatbot-suggestions-section">
+      <h3>Preguntas frecuentes para el Chatbot:</h3>
+      <ul>
+        <li>¿Cuál es la mejor hora para dormir? <span class="emoji-animated">🕙</span></li>
+        <li>¿Cómo puedo mejorar la calidad de mi sueño? <span class="emoji-animated">😴</span></li>
+        <li>¿Cuántas horas debo dormir según mi edad? <span class="emoji-animated">⏰</span></li>
+        <li>¿Qué hago si no puedo dormir? <span class="emoji-animated">🌙</span></li>
+      </ul>
+      <p>¡Copia y pega estas preguntas en el chatbot para obtener respuestas!</p>
+    </div>
+
   </div>
 </template>
 
@@ -42,38 +66,39 @@ export default {
     return {
       age: null,
       recommendedSleep: null,
+      isDarkMode: true,
       ageGroups: {
         'Bebé': {
           range: [0, 3],
           hours: '14-17',
-          icon: 'fas fa-baby-carriage fa-2x',
-          description: 'Los bebés necesitan dormir más para su desarrollo cerebral y físico.',
+          icon: '👶',
+          description: '🌟 Los bebés necesitan dormir más para su desarrollo cerebral y físico.',
           suggestions: [
-            'Mantén un ambiente oscuro y silencioso durante las siestas',
-            'Establece rutinas constantes de alimentación y sueño',
-            'Usa ruido blanco suave para un mejor descanso'
+            '🌙 Mantén un ambiente oscuro y silencioso durante las siestas',
+            '⏰ Establece rutinas constantes de alimentación y sueño',
+            '🎵 Usa ruido blanco suave para un mejor descanso'
           ]
         },
         'Niño': {
           range: [4, 11],
           hours: '10-13',
-          icon: 'fas fa-child fa-2x',
-          description: 'Los niños requieren suficiente descanso para su crecimiento y aprendizaje.',
+          icon: '🧒',
+          description: '✨ Los niños requieren suficiente descanso para su crecimiento y aprendizaje.',
           suggestions: [
-            'Establece una rutina de baño relajante antes de dormir',
-            'Lee un cuento o historia antes de acostarse',
-            'Mantén un ambiente tranquilo y temperatura agradable'
+            '🛁 Establece una rutina de baño relajante antes de dormir',
+            '📚 Lee un cuento o historia antes de acostarse',
+            '🌡️ Mantén un ambiente tranquilo y temperatura agradable'
           ]
         },
         'Adolescente': {
           range: [12, 17],
           hours: '8-10',
-          icon: 'fas fa-graduation-cap fa-2x',
-          description: 'Los adolescentes necesitan dormir bien para su desarrollo y rendimiento escolar.',
+          icon: '👦',
+          description: '📚 Los adolescentes necesitan dormir bien para su desarrollo y rendimiento escolar.',
           suggestions: [
-            'Evita las pantallas al menos 1 hora antes de dormir',
-            'Practica ejercicio regular pero no cerca de la hora de dormir',
-            'Mantén un horario constante de sueño incluso los fines de semana'
+            '📱 Evita las pantallas al menos 1 hora antes de dormir',
+            '🎧 Escucha música relajante',
+            '🏃‍♂️ Realiza ejercicio durante el día'
           ]
         },
         'Adulto': {
@@ -122,6 +147,9 @@ export default {
     }
   },
   methods: {
+    toggleDarkMode() {
+      this.isDarkMode = !this.isDarkMode;
+    },
     getAgeIcon() {
       const age = parseInt(this.age);
       for (const [group, info] of Object.entries(this.ageGroups)) {
@@ -349,27 +377,63 @@ export default {
   background-color: #ffffff;
 }
 
+.theme-toggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.2em;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .dark .sleep-alert {
-  background-color: #333;
+  background-color: #1a1a1a;
+  color: #fff;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .dark .input-section,
 .dark .age-group-info {
   background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
   color: #eeeeee;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
 }
 
 .dark .recommendation-section {
-  background-color: #3a3a3a;
+  background-color: #2a2a2a;
+  border-top: 1px solid #333;
+  transition: all 0.3s ease;
 }
 
 .dark .age-text h3 {
   color: #7cb9ff;
+  transition: color 0.3s ease;
 }
 
 .dark .age-text p {
   color: #ddd;
+  transition: color 0.3s ease;
+}
+
+.dark .suggestions-list li {
+  background: rgba(124, 185, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.dark .suggestions-list li:hover {
+  background: rgba(124, 185, 255, 0.2);
+  transform: translateX(5px);
 }
 
 label {
@@ -413,5 +477,12 @@ i {
 
 .dark input[type="number"]:focus {
   border-color: #7cb9ff;
+}
+
+.emoji-animated {
+  display: inline-block;
+  animation: bounce 1.2s infinite alternate;
+  font-size: 1.3em;
+  vertical-align: middle;
 }
 </style>

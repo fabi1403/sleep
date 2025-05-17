@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "php/api/chatbot_api.php",
+      "use": "@vercel/php"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/php/api/chatbot_api.php",
+      "dest": "php/api/chatbot_api.php"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "index.php"
+    }
+  ]
+}
